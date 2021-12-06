@@ -14,7 +14,7 @@ function launchMissile(x, y)
   else {
     console.log("launchMissile()", x, y);
     userMissile = [windowWidth * (1/2), windowHeight * (31/32), x, y, 0, false, false];
-    userList.append(userMissile)
+    userList.append(userMissile);
     return;
   }
 }
@@ -79,6 +79,25 @@ function drawAll()
   }
 
   window.requestAnimationFrame(drawAll);
+}
+
+function checkCollision(i) {
+  // console.log(missileList[i][4], windowHeight * (15/16))
+    if (missileY >= windowHeight * (15/16) && missileX >= windowWidth * (1/8) && missileX <= windowWidth * (3/8)) {
+      console.log("Missile %d landed!", i);
+      // console.log(missileList);
+      missileList[i][6] = true;
+    }
+    else if (missileY >= windowHeight * (15/16) && missileX >= windowWidth * (7/16) && missileX <= windowWidth * (9/16)) {
+      console.log("Missile %d landed!", i);
+      // console.log(missileList);
+      missileList[i][6] = true;
+    }
+    else if (missileY >= windowHeight * (15/16) && missileX >= windowWidth * (5/8) && missileX <= windowWidth * (7/8)) {
+      console.log("Missile %d landed!", i);
+      // console.log(missileList);
+      missileList[i][6] = true;
+    }
 }
 
 function missilePoint() {
