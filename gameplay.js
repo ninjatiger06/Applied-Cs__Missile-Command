@@ -13,7 +13,8 @@ function launchMissile(x, y)
   }
   else {
     console.log("launchMissile()", x, y);
-    userMissile = [windowWidth * (1/2), windowHeight * (31/32), x, y, 0, false, false];
+    // userMissile = [startingX, startingY, endingX, endingY, lol idk, missileReachedDestination, missileCollided, blastRadius, frameCounter, frameMaxReached]
+    userMissile = [windowWidth * (1/2), windowHeight * (31/32), x, y, 0, false, false, 1, 0, false];
     userList.push(userMissile);
     return;
   }
@@ -95,8 +96,34 @@ function drawAll()
       if (userX == userList[i][2] && userY == userList[i][3]) {
         userList[i][5] = true;
         console.log("user %d landed", i);
-      }
+        console.log(userList[i][8], userList[i][9]);
 
+        context.beginPath();
+        context.arc(userX, userY, userList[i][7], 0*Math.PI, 1.5*Math.PI)
+        context.strokeStyle = "white";
+        context.stroke();
+
+        if (userList[i][8] == 120) {
+          userList[i][9] = true;
+        }
+
+        else if (userList[i][8] == 0 && userList[i][9] == true) {
+          userList[i][9] == false;
+        }
+
+        if (userList[i][8] % 4 == 0 && userList[i][9] == false) {
+          userList[i][7] += 1;
+        }
+
+        else if (userList[i][8] % 3 ==0 && userList[i][9] == true) {
+          userList[i][7] -= 1;
+          if (userList[i][7] < 0) {
+            userList[i][7] = 0;
+          }
+        }
+
+        userList[i][8] += 1;
+      }
     }
   }
 
