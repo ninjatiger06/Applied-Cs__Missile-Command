@@ -89,6 +89,12 @@ function drawAll()
         userY = userList[i][1] + userRate * userList[i][4] * (userList[i][3] - userList[i][1]);
     }
 
+    else if (userList[i][5] == true) {
+      userX = userList[i][2];
+      userY = userList[i][3];
+      checkCollision(userList[i], "missile");
+    }
+
       context.lineTo(userX, userY);
       context.strokeStyle = "white";
       context.stroke();
@@ -99,7 +105,8 @@ function drawAll()
         console.log(userList[i][8], userList[i][9]);
 
         context.beginPath();
-        context.arc(userX, userY, userList[i][7], 0*Math.PI, 1.5*Math.PI)
+        context.arc(userX, userY, userList[i][7], 0*Math.PI, 2*Math.PI)
+        // console.log(userX, userY);
         context.strokeStyle = "white";
         context.stroke();
 
@@ -135,32 +142,40 @@ function drawAll()
   window.requestAnimationFrame(drawAll);
 }
 
-function checkCollision(i, target) {
+function checkCollision(item, target) {
   if (target == "ground") {
     // console.log(missileList[i][4], windowHeight * (15/16))
     if (missileY >= windowHeight * (15/16) && missileX >= windowWidth * (1/8) && missileX <= windowWidth * (3/8)) {
-      console.log("Missile %d landed!", i);
+      console.log("Missile %d landed!", item);
       // console.log(missileList);
       missileList[i][6] = true;
     }
     else if (missileY >= windowHeight * (15/16) && missileX >= windowWidth * (7/16) && missileX <= windowWidth * (9/16)) {
-      console.log("Missile %d landed!", i);
+      console.log("Missile %d landed!", item);
       // console.log(missileList);
       missileList[i][6] = true;
     }
     else if (missileY >= windowHeight * (15/16) && missileX >= windowWidth * (5/8) && missileX <= windowWidth * (7/8)) {
-      console.log("Missile %d landed!", i);
+      console.log("Missile %d landed!", item);
       // console.log(missileList);
       missileList[i][6] = true;
+    }
+  }
+  else if (target == "missile") {
+    for (i = 0; i < missileList.length; i++) {
+      if (item[2] == missileList[i][2] && item[3] == missileList[i][3]) {
+        missileList[i][7] == true;
+      }
     }
   }
 }
 
 function missilePoint() {
-  var missile1 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false];
-  var missile2 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false];
-  var missile3 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false];
-  var missile4 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false];
+  // [starting x, starting y, ending x, ending y, landed, on target, has been hit]
+  var missile1 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false, false];
+  var missile2 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false, false];
+  var missile3 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false, false];
+  var missile4 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false, false];
   var missilePointsList = [missile1, missile2, missile3, missile4];
 
   // console.log(missilePointsList);
