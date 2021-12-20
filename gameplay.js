@@ -13,7 +13,7 @@ function launchMissile(x, y)
   }
   else {
     console.log("launchMissile()", x, y);
-    // userMissile = [startingX, startingY, endingX, endingY, lol idk, missileReachedDestination, missileCollided, blastRadius, frameCounter, frameMaxReached]
+    // userMissile = [startingX, startingY, endingX, endingY, frame counter, missileReachedDestination, missileCollided, blastRadius, frameCounter, frameMaxReached]
     userMissile = [windowWidth * (1/2), windowHeight * (31/32), x, y, 0, false, false, 1, 0, false];
     userList.push(userMissile);
     return;
@@ -48,6 +48,7 @@ function drawAll()
   colorList = ["blue", "red", "green", "yellow", "orange", "purple", "white"]
   allMissilesCleared = true;
   for (i = 0; i < missileList.length; i++) {
+    tempList = missileList;
     missileList[i][4] += 1;
     context.linewidth = 50;
     context.linecap = 'round';
@@ -57,6 +58,10 @@ function drawAll()
     if (missileList[i][5] == false) {
       missileY = missileList[i][1] + missileRate * missileList[i][4] * missileList[i][3];
       missileX = missileList[i][0] + missileRate * missileList[i][4] * (missileList[i][2] - missileList[i][0]);
+    }
+
+    else if (missileList[i][7] == true) {
+      //splice templist
     }
 
     context.lineTo(missileX, missileY);
@@ -82,6 +87,7 @@ function drawAll()
     }
 
     // console.log(allMissilesCleared);
+    missileList = tempList;
   }
 
   if (userList.length > 0) {
@@ -100,7 +106,8 @@ function drawAll()
     else if (rocket[5] == true) {
       userX = rocket[2];
       userY = rocket[3];
-      checkCollision(rocket, "missile");
+      rocketNum = userList.indexOf(rocket);
+      checkCollision(rocket, rocketNum, "missile");
     }
       context.lineTo(userX, userY);
       if (rocket[5] == true) {
@@ -114,7 +121,7 @@ function drawAll()
       if (userX == rocket[2] && userY == rocket[3]) {
         rocket[5] = true;
         console.log("user %d landed", i);
-        
+
         context.beginPath();
         context.arc(rocket[2], rocket[3], rocket[7], 0*Math.PI, 2*Math.PI)
         // console.log(userX, userY);
@@ -154,7 +161,7 @@ function drawAll()
   window.requestAnimationFrame(drawAll);
 }
 
-function checkCollision(item, target) {
+function checkCollision(item, itemNum, target) {
   if (target == "ground") {
     // console.log(missileList[i][4], windowHeight * (15/16))
     if (missileY >= windowHeight * (15/16) && missileX >= windowWidth * (1/8) && missileX <= windowWidth * (3/8)) {
@@ -175,17 +182,30 @@ function checkCollision(item, target) {
   }
   else if (target == "missile") {
     for (i = 0; i < missileList.length; i++) {
-      if (item[2] == missileList[i][2] && item[3] == missileList[i][3]) {
+      missilePos = findMissilePosition(i);
+      xDiff = Math.abs(missilePos[0] - userX);
+      yDiff = Math.abs(missilePos[1] - userY);
+      xDistance = Math.pow(xDiff, 2);
+      yDistance = Math.pow(yDiff, 2);
+      distance = Math.sqrt(xDistance + yDistance);
+      if (distance <= rocket[7]) {
+        console.log("user missile %d hit missile %d", itemNum, i);
         missileList[i][7] = true;
-        console.log("Missile %i has been hit", i);
+        userList[itemNum][6] = true;
       }
     }
     return;
   }
 }
 
+function findMissilePosition(missileNum, axis) {
+  xPos = missileList[missileNum][0] + missileRate * missileList[missileNum][4] * (missileList[missileNum][2] - missileList[missileNum][0]);
+  yPos = missileList[missileNum][1] + missileRate * missileList[missileNum][4] * (missileList[missileNum][3] - missileList[missileNum][1]);
+  return [xPos, yPos];
+}
+
 function missilePoint() {
-  // [starting x, starting y, ending x, ending y, landed, on target, has been hit]
+  // [starting x, starting y, ending x, ending y, parameter (frame counter), landed, on target, has been hit]
   var missile1 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false, false];
   var missile2 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false, false];
   var missile3 = [Math.random() * canvas.width, 0, Math.random() * canvas.width, canvas.height, 0, false, false, false];
@@ -211,7 +231,7 @@ canvas.height = windowHeight - 20;
 canvas.style.border = "1px solid black";
 
 missileList = missilePoint();
-var missileRate = 1/1080;
+var missileRate = 1/1920;
 var allMissilesCleared = true;
 
 userList = [];
